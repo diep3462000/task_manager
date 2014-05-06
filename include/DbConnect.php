@@ -6,6 +6,7 @@
  * @author Ravi Tamada
  * @link URL Tutorial link
  */
+include_once dirname(__FILE__) . '/Config.php';
 require __DIR__.'/../libs/Predis/Autoloader.php';
 Predis\Autoloader::register();
 class DbConnect {
@@ -58,8 +59,9 @@ class DbConnect {
         //$r = new Redis();
         $r = new Predis\Client();
 
-        $r->connect(HOST, PUERTO);
-        $r->select(BD);
+        // $r->connect(HOST, PUERTO);
+        // $r->select(BD);
+        $r->connect();
         return $r;
     }
 

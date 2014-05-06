@@ -51,7 +51,7 @@ class DbHandler {
         
             $r->set("name:$name:id",$name);
             $r->set("uid:$userid:email",$email);
-            $r->set("uid:$userid:password",$password);
+            $r->set("uid:$userid:password",$password_hash);
 
             // Check for successful insertion
             if ($r->get("name:$name:id")) {
@@ -124,8 +124,8 @@ class DbHandler {
         // $num_rows = $stmt->num_rows;
         // $stmt->close();
         // return $num_rows > 0;
-        error_log('diepth' . $email);
         $stmt = $this->conn->get("email:$email:id");
+        error_log('diepth exit' . $stmt);
         return !is_null($stmt);
     }
 
