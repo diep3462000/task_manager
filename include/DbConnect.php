@@ -6,7 +6,7 @@
  * @author Ravi Tamada
  * @link URL Tutorial link
  */
-require '../libs/Predis/Autoloader.php';
+require __DIR__.'/../libs/Predis/Autoloader.php';
 Predis\Autoloader::register();
 class DbConnect {
 
