@@ -15,7 +15,7 @@ class DbHandler {
         require_once dirname(__FILE__) . '/DbConnect.php';
         // opening db connection
         $db = new DbConnect();
-        $this->conn = $db->connect();
+        $this->conn = $db->redisLink();
     }
 
     /* ------------- `users` table method ------------------ */
@@ -40,15 +40,21 @@ class DbHandler {
             error_log('diepth2 create user');
 
             // insert query
-            $stmt = $this->conn->prepare("INSERT INTO users(name, email, password_hash, api_key, status) values(?, ?, ?, ?, 1)");
-            $stmt->bind_param("ssss", $name, $email, $password_hash, $api_key);
+            // $stmt = $this->conn->prepare("INSERT INTO users(name, email, password_hash, api_key, status) values(?, ?, ?, ?, 1)");
+            // $stmt->bind_param("ssss", $name, $email, $password_hash, $api_key);
 
-            $result = $stmt->execute();
+            // $result = $stmt->execute();
 
-            $stmt->close();
+            // $stmt->close();
+            $r = $this->conn;
+            $userid = $r->incr("global:nextUserId");
+        
+            $r->set("name:$name:id",$name);
+            $r->set("uid:$userid:email",$email);
+            $r->set("uid:$userid:password",$password);
 
             // Check for successful insertion
-            if ($result) {
+            if ($r->get("name:$name:id")) {
                 // User successfully inserted
                 return USER_CREATED_SUCCESSFULLY;
             } else {
@@ -57,6 +63,7 @@ class DbHandler {
             }
         } else {
             // User with same email already existed in the db
+            goback("Sorry the selected username is already in use.");
             return USER_ALREADY_EXISTED;
         }
 
@@ -71,8 +78,8 @@ class DbHandler {
      */
     public function checkLogin($email, $password) {
         // fetching user by email
+        //$stmt = $this->conn->prepare("SELECT password_hash FROM users WHERE email = ?");
         $stmt = $this->conn->prepare("SELECT password_hash FROM users WHERE email = ?");
-
         $stmt->bind_param("s", $email);
 
         $stmt->execute();
@@ -110,13 +117,16 @@ class DbHandler {
      * @return boolean
      */
     private function isUserExists($email) {
-        $stmt = $this->conn->prepare("SELECT id from users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->store_result();
-        $num_rows = $stmt->num_rows;
-        $stmt->close();
-        return $num_rows > 0;
+        //$stmt = $this->conn->prepare("SELECT id from users WHERE email = ?");
+        // $stmt->bind_param("s", $email);
+        // $stmt->execute();
+        // $stmt->store_result();
+        // $num_rows = $stmt->num_rows;
+        // $stmt->close();
+        // return $num_rows > 0;
+        error_log('diepth' . $email);
+        $stmt = $this->conn->get("email:$email:id");
+        return !is_null($stmt);
     }
 
     /**

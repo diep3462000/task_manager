@@ -68,8 +68,8 @@ $app->post('/register', function() use ($app) {
             $password = $app->request->post('password');
 
             // validating email address
-            //validateEmail($email);
-
+            //validateEmail($email);    
+            error_log('/register' . $name . $email);
             $db = new DbHandler();
             $res = $db->createUser($name, $email, $password);
 
