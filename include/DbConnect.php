@@ -46,6 +46,22 @@ class DbConnect {
                 die('ERROR '.$e->getCode().': '.$e->getMessage());
             }
     }
+    function redisLink() {
+        define('HOST','127.0.0.1');
+        define('PUERTO',6379);
+        define('BD',0);
+        static $r = false;
+
+        if ($r) return $r;
+
+        // Change libaries here
+        //$r = new Redis();
+        $r = new Predis\Client();
+
+        $r->connect(HOST, PUERTO);
+        $r->select(BD);
+        return $r;
+    }
 
 }
 

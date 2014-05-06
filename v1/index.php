@@ -57,8 +57,7 @@ function authenticate(\Slim\Route $route) {
  */
 $app->post('/register', function() use ($app) {
             // check for required params
-    error_log('diepth message');
-            verifyRequiredParams(array('name', 'email', 'password'));
+            //verifyRequiredParams(array('name', 'email', 'password'));
 
             $response = array();
 
@@ -66,6 +65,7 @@ $app->post('/register', function() use ($app) {
             $name = $app->request->post('name');
             $email = $app->request->post('email');
             $password = $app->request->post('password');
+                error_log('diepth message' . $name . $email);
 
             // validating email address
             validateEmail($email);
