@@ -47,14 +47,17 @@ class DbHandler {
 
             // $stmt->close();
             $r = $this->conn;
-            $userid = $r->incr("global:nextUserId");
+        $userid = $r->incr("global:nextUserId");
         
-            $r->set("name:$name:id",$name);
-            $r->set("uid:$userid:email",$email);
-            $r->set("uid:$userid:password",$password_hash);
+        $r->set("name:$name:id",$userid);
+        $r->set("uid:$userid:name",$name);
+        $r->set("uid:$userid:email",$email);
+        $r->set("uid:$userid:password",$password_hash);
+        $r->sadd("global:users",$userid);
 
             // Check for successful insertion
-            if ($r->get("name:$name:id")) {
+        error_log('USER_CREATE_FAILED' . $r->get("name:$name:id"));
+            if ($r->get("uid:$userid:name") == $name) {
                 // User successfully inserted
                 return USER_CREATED_SUCCESSFULLY;
             } else {
@@ -63,7 +66,7 @@ class DbHandler {
             }
         } else {
             // User with same email already existed in the db
-            goback("Sorry the selected username is already in use.");
+            //goback("Sorry the selected username is already in use.");
             return USER_ALREADY_EXISTED;
         }
 
@@ -124,9 +127,13 @@ class DbHandler {
         // $num_rows = $stmt->num_rows;
         // $stmt->close();
         // return $num_rows > 0;
-        $stmt = $this->conn->get("email:$email:id");
-        error_log('diepth exit' . $stmt);
-        return !is_null($stmt);
+        $r = $this->conn;
+        if ($r->get("email:$email:id")) {
+            //goback("Sorry the selected username is already in use.");
+            error_log(' diep exit'. $this->conn->get("email:$email:id"));
+            return true;
+        }
+        return false;
     }
 
     /**
