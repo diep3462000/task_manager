@@ -31,7 +31,7 @@ class DbHandler {
         $response = array();
 
         // First check if user already existed in db
-        if (!$this->isUserExists($email)) {
+        if (!$this->isUserExists($name)) {
             // Generating password hash
             $password_hash = PassHash::hash($password);
 
@@ -119,7 +119,7 @@ class DbHandler {
      * @param String $email email to check in db
      * @return boolean
      */
-    private function isUserExists($email) {
+    private function isUserExists($name) {
         //$stmt = $this->conn->prepare("SELECT id from users WHERE email = ?");
         // $stmt->bind_param("s", $email);
         // $stmt->execute();
@@ -128,9 +128,9 @@ class DbHandler {
         // $stmt->close();
         // return $num_rows > 0;
         $r = $this->conn;
-        if ($r->get("email:$email:id")) {
+        if ($r->get("name:$name:id")) {
             //goback("Sorry the selected username is already in use.");
-            error_log(' diep exit'. $this->conn->get("email:$email:id"));
+            error_log(' diep exit'. $this->conn->get("name:$name:id"));
             return true;
         }
         return false;
